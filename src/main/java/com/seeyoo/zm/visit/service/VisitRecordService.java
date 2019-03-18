@@ -1,6 +1,6 @@
 package com.seeyoo.zm.visit.service;
 
-import org.fage.vo.VisitStatisBean;
+import com.seeyoo.zm.visit.bean.VisitStatisBean;
 import com.seeyoo.zm.visit.model.VisitRecord;
 import com.seeyoo.zm.visit.repository.VisitRecordRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,6 +84,7 @@ public class VisitRecordService {
 
     public Page<VisitStatisBean> pageVisitStatis (String startDate,String endDate,int page,int size){
         Pageable pageable = new PageRequest(page, size);
-        return visitRecordRepository.findAllByPageable(startDate,endDate,pageable);
+        Page<Object[]> objects = visitRecordRepository.findAllByPageable(startDate,endDate,pageable);
+        return  null;
     }
 }

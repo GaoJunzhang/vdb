@@ -1,7 +1,9 @@
 package com.seeyoo.zm.visit.controller;
 
 import com.seeyoo.zm.visit.bean.VisitRecordBean;
-import org.fage.vo.VisitStatisBean;
+import com.seeyoo.zm.visit.service.IncomeService;
+import com.seeyoo.zm.visit.util.PageParam;
+import com.seeyoo.zm.visit.bean.VisitStatisBean;
 import com.seeyoo.zm.visit.model.VisitRecord;
 import com.seeyoo.zm.visit.service.VisitRecordService;
 import com.seeyoo.zm.visit.util.StringTools;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.util.*;
 
@@ -24,6 +27,9 @@ import java.util.*;
 public class VisitRecordController {
     @Autowired
     private VisitRecordService visitRecordService;
+
+    @Autowired
+    private IncomeService incomeService;
 
     @Value("${vdb.vaildAdb}")
     private int Adb;
@@ -60,18 +66,12 @@ public class VisitRecordController {
         Calendar tCalendar = Calendar.getInstance();
         tCalendar.setTime(startCalendar.getTime());
         List<VisitRecordBean> visitRecordBeans = new ArrayList<VisitRecordBean>();
-        Page<VisitStatisBean> pages = visitRecordService.pageVisitStatis(startDate,endDate,page,size);
-//        List<VisitRecord> list = visitRecordService.findAllByTimeBetween(Timestamp.valueOf(startDate + " 00:00:00"), Timestamp.valueOf(endDate + " 23:59:59"));
-//        while (tCalendar.compareTo(endCalendar) <= 0) {
-//            VisitRecordBean visitRecordBean = new VisitRecordBean();
-//            String tString = StringTools.dateToString(tCalendar.getTime());
-//            visitRecordBean = getVisitStastic(list,tString,Adb,Bdb,pAdb,pBdb);
-//            visitRecordBean.setVisitDate(tString);
-//            tCalendar.add(Calendar.DATE, 1);
-//            visitRecordBeans.add(visitRecordBean);
-//        }
-//        PageHelper.startPage(1, 5);
-//        PageInfo<VisitRecordBean> appsPageInfo = new PageInfo<>(visitRecordBeans);
+        PageParam pageParam = new PageParam();
+        pageParam.setStart(0);
+        pageParam.setLength(5);
+        pageParam.setLength(5);
+        System.out.println("sssssssssssssss");
+        Page<VisitStatisBean> pages = incomeService.findIncomeDailysByPage(pageParam,Timestamp.valueOf(startDate + " 00:00:00"), Timestamp.valueOf(endDate + " 23:59:59"));
         map.put("list", pages);
         return map;
     }

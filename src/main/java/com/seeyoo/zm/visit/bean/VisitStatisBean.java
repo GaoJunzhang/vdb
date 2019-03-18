@@ -1,22 +1,21 @@
-package org.fage.vo;
+package com.seeyoo.zm.visit.bean;
 
 import lombok.Data;
 
+import javax.persistence.Entity;
 import java.math.BigInteger;
+import java.util.Date;
 
 @Data
 public class VisitStatisBean {
-    private String visitDate;
+    private Date visitDate;
     private BigInteger visitCount;
-    //    private int vaildCount;
-//    private long vaildRate;
-//    private int passCount;
-    public VisitStatisBean(String visitDate, BigInteger visitCount) {
+    public VisitStatisBean(Date visitDate, BigInteger visitCount) {
         this.visitDate = visitDate;
         this.visitCount = visitCount;
     }
 
     public VisitStatisBean() {
-        super();
+
     }
 }
