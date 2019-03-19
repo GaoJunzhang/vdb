@@ -1,11 +1,11 @@
 package com.seeyoo.zm.visit.controller;
 
 import com.seeyoo.zm.visit.bean.VisitRecordBean;
-import com.seeyoo.zm.visit.service.IncomeService;
-import com.seeyoo.zm.visit.util.PageParam;
 import com.seeyoo.zm.visit.bean.VisitStatisBean;
 import com.seeyoo.zm.visit.model.VisitRecord;
+import com.seeyoo.zm.visit.service.IncomeService;
 import com.seeyoo.zm.visit.service.VisitRecordService;
+import com.seeyoo.zm.visit.util.PageParam;
 import com.seeyoo.zm.visit.util.StringTools;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -47,7 +47,7 @@ public class VisitRecordController {
 
     @RequestMapping(value = "/getVisitStastic", method = RequestMethod.GET)
     @ApiOperation(value = "客流详情")
-    public Map<String, Object> getVisitStastic(String startDate, String endDate, @RequestParam(name = "page",defaultValue = "1") int page, @RequestParam(name = "size",defaultValue = "10") int size) {
+    public Map<String, Object> getVisitStastic(String startDate, String endDate, @RequestParam(name = "page",defaultValue = "1") int page, @RequestParam(name = "rows",defaultValue = "10") int rows) {
         Map<String, Object> map = new HashMap<String, Object>();
 
         if (StringTools.isEmptyString(startDate)) {
@@ -66,13 +66,19 @@ public class VisitRecordController {
         Calendar tCalendar = Calendar.getInstance();
         tCalendar.setTime(startCalendar.getTime());
         List<VisitRecordBean> visitRecordBeans = new ArrayList<VisitRecordBean>();
-        PageParam pageParam = new PageParam();
-        pageParam.setStart(0);
-        pageParam.setLength(5);
-        pageParam.setLength(5);
-        System.out.println("sssssssssssssss");
-        Page<VisitStatisBean> pages = incomeService.findIncomeDailysByPage(pageParam,Timestamp.valueOf(startDate + " 00:00:00"), Timestamp.valueOf(endDate + " 23:59:59"));
-        map.put("list", pages);
+        List<VisitRecord> btVisits = visitRecordService.findAllByTimeBetween(Timestamp.valueOf(startDate + " 00:00:00"),Timestamp.valueOf(endDate + " 23:59:59"));
+        PageParam pageParam = new PageParam(page,rows);
+        Map<String,Object> map1 = incomeService.findIncomeDailysByPage(pageParam,Timestamp.valueOf(startDate + " 00:00:00"), Timestamp.valueOf(endDate + " 23:59:59"));
+        Page<VisitStatisBean> pages = (Page<VisitStatisBean>)map1.get("page");
+        List<VisitStatisBean> visitStatisBeans = pages.getContent();
+        for (VisitStatisBean visitStatisBean:visitStatisBeans){
+            VisitRecordBean visitRecordBean = getVisitStastic(btVisits,StringTools.dateToString(visitStatisBean.getVisitDate()),Adb,Bdb,pAdb,pBdb);
+            visitRecordBean.setVisitDate(StringTools.dateToString(visitStatisBean.getVisitDate()));
+            visitRecordBeans.add(visitRecordBean);
+        }
+        map.put("rows", visitRecordBeans);
+        map.put("total",map1.get("total"));
+//        map.put("page",pages.getTotalPages());
         return map;
     }
 
@@ -99,7 +105,7 @@ public class VisitRecordController {
         visitRecordBean.setVisitCount(visitCount);
         visitRecordBean.setVaildCount(vaildCount);
         visitRecordBean.setPassCount(passCount);
-        visitRecordBean.setVaildRate(visitCount > 0 ? df.format((float) vaildCount / visitCount) : "0");
+        visitRecordBean.setVaildRate(visitCount > 0 ? df.format((float) vaildCount*100 / visitCount)+"%" : "0.00%");
         return visitRecordBean;
     }
 }

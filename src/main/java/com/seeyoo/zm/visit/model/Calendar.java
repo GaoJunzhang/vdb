@@ -10,7 +10,7 @@ import java.util.Objects;
 @Entity
 public class Calendar {
     private Date datelist;
-    private int id;
+    private Long id;
 
     @Basic
     @Column(name = "datelist")
@@ -37,11 +37,11 @@ public class Calendar {
 
     @Id
     @Column(name = "id")
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 }

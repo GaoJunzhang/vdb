@@ -38,53 +38,7 @@ public class VisitRecordService {
         return visitRecordRepository.save(visitRecord);
     }
 
-//    public List<VisitRecordBean> visitCount() {
-//        List<Object[]> list = visitRecordRepository.visitCount();
-//        List<VisitRecordBean> visitRecordBeans = list.size() > 0 ? EntityUtils.castEntity(list, VisitRecordBean.class, new VisitRecordBean()) : null;
-//        return visitRecordBeans;
-//    }
-
     public List<VisitRecord> findAllByTimeBetween(Timestamp start, Timestamp end){
         return visitRecordRepository.findAllByTimeBetween(start,end);
-    }
-
-    public Page<VisitRecord> VisitRecords(Timestamp start,Timestamp end, int page, int size, String sortType, String sortValue) {
-        String[] svs = sortValue.split(",");
-        String[] sts = sortType.split(",");
-
-        List<Sort.Order> orders = new ArrayList<Sort.Order>();
-        for (int i = 0; i < svs.length; i++) {
-            Sort.Order order = new Sort.Order(Sort.Direction.fromString(sts[i]), svs[i]);
-            orders.add(order);
-        }
-        Sort sort = new Sort(orders);
-        Pageable pageable = new PageRequest(page, size, sort);
-
-        Specification<VisitRecord> specification = new Specification<VisitRecord>() {
-            @Override
-            public Predicate toPredicate(Root<VisitRecord> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-                Predicate predicate = cb.conjunction();
-                predicate.getExpressions().add(cb.equal(root.get("isDelete"), (short) 0));
-                if (start != null) {
-
-                    predicate.getExpressions().add(cb.greaterThan(root.get("time"),start));
-                }
-                if (end != null) {
-
-                    predicate.getExpressions().add(cb.lessThan(root.get("time"),end));
-                }
-                return predicate;
-            }
-
-        };
-
-        return visitRecordRepository.findAll(specification, pageable);
-    }
-
-
-    public Page<VisitStatisBean> pageVisitStatis (String startDate,String endDate,int page,int size){
-        Pageable pageable = new PageRequest(page, size);
-        Page<Object[]> objects = visitRecordRepository.findAllByPageable(startDate,endDate,pageable);
-        return  null;
     }
 }

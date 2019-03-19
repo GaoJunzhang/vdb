@@ -1,10 +1,18 @@
 package com.seeyoo.zm.visit.util;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class PageParam {
     private int start;
     private int length;
     private int page;
+
+    public PageParam(int page,int length){
+        this.page= page;
+        this.length=length;
+        this.start=(page-1)*length;
+    }
 }
