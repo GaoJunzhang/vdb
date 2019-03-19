@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import javax.xml.crypto.Data;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -16,10 +17,9 @@ public interface VisitRecordRepository extends JpaRepository<VisitRecord,Long> {
 
     public List<VisitRecord> findAllByTimeBetween(@Param("start") Timestamp start,@Param("end") Timestamp end);
 
-    Page<VisitRecord> findAll(Specification<VisitRecord> spec, Pageable pageable);
+    @Query(nativeQuery = true,value = "SELECT * FROM visit_record t where DATE_FORMAT(t.time,'%Y-%m-%d')=:time group  by t.mac")
+    List<VisitRecord> findByTime(@Param("time") String time);
 
-    @Query(nativeQuery = true, value = "SELECT date(dday) visitDate, count(*) - 1 as visitCount FROM ( SELECT datelist as dday FROM calendar  UNION ALL SELECT time FROM visit_record) a where a.dday>=:startDate and a.dday<=:endDate GROUP BY visitDate /* #pageable# */",
-        countQuery = "select count(*) from Calendar where datelist>=:startDate and datelist<=:endDate")
-    Page<Object[]> findAllByPageable(@Param("startDate") String startDate,@Param("endDate") String endDate,Pageable pageable);
-
+    @Query(nativeQuery = true,value = "SELECT ROUND(UNIX_TIMESTAMP(MAX(t.time)) - UNIX_TIMESTAMP(MIN(t.time))) from visit_record t where t.mac=:mac and DATE_FORMAT(t.time,'%Y-%m-%d')=:time")
+    public int residenceTime(@Param("time") String time,@Param("mac") String mac);
 }

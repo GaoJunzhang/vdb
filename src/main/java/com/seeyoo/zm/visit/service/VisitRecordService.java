@@ -3,6 +3,7 @@ package com.seeyoo.zm.visit.service;
 import com.seeyoo.zm.visit.bean.VisitStatisBean;
 import com.seeyoo.zm.visit.model.VisitRecord;
 import com.seeyoo.zm.visit.repository.VisitRecordRepository;
+import com.seeyoo.zm.visit.util.StringTools;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,6 +16,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.xml.crypto.Data;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,5 +42,12 @@ public class VisitRecordService {
 
     public List<VisitRecord> findAllByTimeBetween(Timestamp start, Timestamp end){
         return visitRecordRepository.findAllByTimeBetween(start,end);
+    }
+    public List<VisitRecord> findDistinctByMacAndTime(String time){
+        return visitRecordRepository.findByTime(time);
+    }
+
+    public int residenceTime(String time,String mac){
+        return visitRecordRepository.residenceTime(time,mac);
     }
 }
