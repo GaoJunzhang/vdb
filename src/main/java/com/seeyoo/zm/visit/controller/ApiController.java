@@ -1,9 +1,11 @@
 package com.seeyoo.zm.visit.controller;
 
 import com.seeyoo.zm.visit.model.Assets;
+import com.seeyoo.zm.visit.model.RegularCustomers;
 import com.seeyoo.zm.visit.result.JsonResult;
 import com.seeyoo.zm.visit.result.ResultCode;
 import com.seeyoo.zm.visit.service.AssetsService;
+import com.seeyoo.zm.visit.service.RegularCustomersService;
 import com.seeyoo.zm.visit.service.VisitMemberService;
 import com.seeyoo.zm.visit.service.VisitRecordService;
 import io.swagger.annotations.Api;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/web")
@@ -29,6 +32,8 @@ public class ApiController {
     private VisitMemberService visitMemberService;
     @Autowired
     private AssetsService assetsService;
+    @Autowired
+    private RegularCustomersService regularCustomersService;
 
     @ApiOperation(value="保存访客记录", notes="根据json对象保存")
     @ApiImplicitParam(name = "jsonObje", value = "JSON对象", required = true, dataType = "JsonObj", paramType = "path")
@@ -63,6 +68,10 @@ public class ApiController {
                         for (int j = 0; j < macsArry.size(); j++) {
                             macObj = JSONObject.fromObject(macsArry.get(j));
                             visitRecordService.saveVisitRecord(null, macObj.get("mac") + "", time1, Integer.parseInt(macObj.get("db") + ""), assets.getId());
+                            List<RegularCustomers> regularCustomers = regularCustomersService.findByMac(macObj.get("mac")+"");
+                            if (regularCustomers.size()<=0){
+                                regularCustomersService.saveRegularCutomers(null,macObj.get("mac")+"",time1);
+                            }
                         }
                     }
                 }

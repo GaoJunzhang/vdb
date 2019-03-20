@@ -4,11 +4,12 @@
     "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
   <session-factory>
-    <property name="connection.url">jdbc:mysql://192.168.31.69:3306/mps</property>
+    <property name="connection.url">jdbc:mysql://192.168.31.69:3306/vdb</property>
     <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
       <mapping class="com.seeyoo.zm.visit.model.Assets"/>
       <mapping class="com.seeyoo.zm.visit.model.VisitMember"/>
       <mapping class="com.seeyoo.zm.visit.model.VisitRecord"/>
+      <mapping class="com.seeyoo.zm.visit.model.RegularCustomers"/>
       <!-- <property name="connection.username"/> -->
     <!-- <property name="connection.password"/> -->
 

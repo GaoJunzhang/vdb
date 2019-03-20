@@ -1,8 +1,10 @@
 package com.seeyoo.zm.visit.service;
 
+import com.seeyoo.zm.visit.bean.DayVisitBean;
 import com.seeyoo.zm.visit.bean.VisitStatisBean;
 import com.seeyoo.zm.visit.model.VisitRecord;
 import com.seeyoo.zm.visit.repository.VisitRecordRepository;
+import com.seeyoo.zm.visit.util.EntityUtils;
 import com.seeyoo.zm.visit.util.StringTools;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -40,7 +42,10 @@ public class VisitRecordService {
         return visitRecordRepository.save(visitRecord);
     }
 
-    public List<VisitRecord> findAllByTimeBetween(Timestamp start, Timestamp end,int assetsId){
+    public List<VisitRecord> findAllByTimeBetween(Timestamp start, Timestamp end,Integer assetsId){
+        if (assetsId==null){
+            return visitRecordRepository.findAllByTimeBetween(start,end);
+        }
         return visitRecordRepository.findAllByTimeBetweenAndAssetsId(start,end,assetsId);
     }
     public List<VisitRecord> findDistinctByMacAndTime(String time){
@@ -49,5 +54,10 @@ public class VisitRecordService {
 
     public int residenceTime(String time,String mac){
         return visitRecordRepository.residenceTime(time,mac);
+    }
+
+    public List<DayVisitBean> dayVisits(String time){
+        List<DayVisitBean> list = EntityUtils.castEntity(visitRecordRepository.dayVisits(time),DayVisitBean.class,new DayVisitBean());
+        return list;
     }
 }

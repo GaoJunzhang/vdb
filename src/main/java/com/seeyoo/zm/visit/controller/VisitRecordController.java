@@ -1,9 +1,12 @@
 package com.seeyoo.zm.visit.controller;
 
+import com.seeyoo.zm.visit.bean.DayVisitBean;
 import com.seeyoo.zm.visit.bean.VisitRecordBean;
 import com.seeyoo.zm.visit.bean.VisitStatisBean;
+import com.seeyoo.zm.visit.model.RegularCustomers;
 import com.seeyoo.zm.visit.model.VisitRecord;
 import com.seeyoo.zm.visit.service.IncomeService;
+import com.seeyoo.zm.visit.service.RegularCustomersService;
 import com.seeyoo.zm.visit.service.VisitRecordService;
 import com.seeyoo.zm.visit.util.PageParam;
 import com.seeyoo.zm.visit.util.StringTools;
@@ -30,6 +33,9 @@ public class VisitRecordController {
 
     @Autowired
     private IncomeService incomeService;
+
+    @Autowired
+    private RegularCustomersService regularCustomersService;
 
     @Value("${vdb.vaildAdb}")
     private int Adb;
@@ -116,7 +122,7 @@ public class VisitRecordController {
     }
 
     @RequestMapping(value = "/getVisitResidenceStastic", method = RequestMethod.GET)
-    @ApiOperation(value = "客流详情")
+    @ApiOperation(value = "驻留时长")
     public Map<String, Object> getVisitResidenceStastic(String startDate, String endDate,Integer assetsId, @RequestParam(name = "page", defaultValue = "1") int page, @RequestParam(name = "rows", defaultValue = "10") int rows) {
         Map<String, Object> map = new HashMap<String, Object>();
         if (StringTools.isEmptyString(startDate)) {
@@ -171,5 +177,67 @@ public class VisitRecordController {
         map.put("rows", list);
         map.put("total", map1.get("total"));
         return map;
+    }
+
+    @RequestMapping(value = "/getNewAndOldCustomers", method = RequestMethod.GET)
+    @ApiOperation(value = "新老客户")
+    public Map<String,Object> getNewAndOldCustomers(String startDate, String endDate,Integer assetsId, @RequestParam(name = "page", defaultValue = "1") int page, @RequestParam(name = "rows", defaultValue = "10") int rows){
+        Map<String, Object> map = new HashMap<String, Object>();
+        if (StringTools.isEmptyString(startDate)) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.DATE, -6);
+            startDate = StringTools.dateToString(calendar.getTime());
+        }
+        if (StringTools.isEmptyString(endDate)) {
+            Calendar calendar = Calendar.getInstance();
+            endDate = StringTools.dateToString(calendar.getTime());
+        }
+        Calendar startCalendar = Calendar.getInstance();
+        startCalendar.setTime(StringTools.stringToDate(startDate));
+        Calendar endCalendar = Calendar.getInstance();
+        endCalendar.setTime(StringTools.stringToDate(endDate));
+        Calendar tCalendar = Calendar.getInstance();
+        tCalendar.setTime(startCalendar.getTime());
+        PageParam pageParam = new PageParam(page, rows);
+        Map<String, Object> map1 = incomeService.findIncomeDailysByPage(pageParam, Timestamp.valueOf(startDate + " 00:00:00"), Timestamp.valueOf(endDate + " 23:59:59"),assetsId);
+        Page<VisitStatisBean> pages = (Page<VisitStatisBean>) map1.get("page");
+        List<VisitStatisBean> visitStatisBeans = pages.getContent();
+        List<RegularCustomers> regularCustomers = regularCustomersService.regularCustomers();
+        List<Map<String,String>> list = new ArrayList<Map<String,String>>(pages.getSize());
+        for (VisitStatisBean visitStatisBean : visitStatisBeans) {
+            Map<String,String> map2 = new HashMap<String, String>();
+            int oldCount=0;
+            int allCount = Integer.parseInt(visitStatisBean.getVisitCount()+"");
+            List<DayVisitBean> dayVisitBeans = visitRecordService.dayVisits(visitStatisBean.getVisitDate()+"");
+            for (DayVisitBean dayVisitBean:dayVisitBeans){
+                if (isOldCustomer(regularCustomers,dayVisitBean.getMac(),dayVisitBean.getTime())){
+                    oldCount+=Integer.parseInt(dayVisitBean.getVisitDayCount()+"");
+                }
+            }
+            map2.put("visitDate",visitStatisBean.getVisitDate()+"");//日期
+            map2.put("newCustomerRate",allCount>0?df.format((float)(allCount-oldCount)*100/allCount):"0");//新客比率
+            map2.put("newCustomerCount",allCount-oldCount+"");//新客数量
+            map2.put("oldCustomerRate",allCount>0?df.format((float)oldCount*100/allCount)+"":"0");
+            map2.put("oldCustomerCount",oldCount+"");
+            list.add(map2);
+        }
+        map.put("rows",list);
+        map.put("total", map1.get("total"));
+        return map;
+    }
+
+    public boolean isOldCustomer(List<RegularCustomers> list,String mac,Timestamp time){
+        if (list.size()<=0){
+            return false;
+        }
+        boolean flag =false;
+        for (RegularCustomers regularCustomers:list){
+            long diffTime = (time.getTime()-regularCustomers.getCreateTime().getTime())/3600000;
+            if (regularCustomers.getMac().equals(mac)&&diffTime>=12){
+                flag = true;
+                break;
+            }
+        }
+        return flag;
     }
 }

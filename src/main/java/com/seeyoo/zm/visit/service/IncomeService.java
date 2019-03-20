@@ -24,14 +24,14 @@ public class IncomeService {
     @PersistenceContext
     EntityManager entityManager;
 
-    public Map<String,Object> findIncomeDailysByPage(PageParam pageParam, Timestamp start, Timestamp end,Integer assetsId) {
-        Map<String,Object> map = new HashMap<String,Object>();
+    public Map<String, Object> findIncomeDailysByPage(PageParam pageParam, Timestamp start, Timestamp end, Integer assetsId) {
+        Map<String, Object> map = new HashMap<String, Object>();
         StringBuilder countSelectSql = new StringBuilder();
         countSelectSql.append("select count(id) from Calendar where 1=1 ");
 
         StringBuilder selectSql = new StringBuilder();
         selectSql.append("SELECT date(dday) as visitDate, count(*) - 1 as visitCount FROM ( SELECT datelist as dday FROM calendar  UNION ALL SELECT time FROM visit_record ");
-        if (assetsId!=null){
+        if (assetsId != null) {
             selectSql.append(" where assets_id=").append(assetsId);
         }
         selectSql.append(") a where 1=1");
@@ -61,14 +61,14 @@ public class IncomeService {
             query.setMaxResults(pageParam.getLength());
         }
         List<VisitStatisBean> incomeDailyList = EntityUtils.castEntity(query.getResultList(), VisitStatisBean.class, new VisitStatisBean());
-        map.put("total",count);
+        map.put("total", count);
         if (pageParam != null) { //分页
             Pageable pageable = new PageRequest(pageParam.getPage(), pageParam.getLength());
             Page<VisitStatisBean> incomeDailyPage = new PageImpl<VisitStatisBean>(incomeDailyList, pageable, count);
-            map.put("page",incomeDailyPage);
+            map.put("page", incomeDailyPage);
         } else { //不分页
-            Page<VisitStatisBean> incomeDailyPage= new PageImpl<VisitStatisBean>(incomeDailyList);
-            map.put("page",incomeDailyPage);
+            Page<VisitStatisBean> incomeDailyPage = new PageImpl<VisitStatisBean>(incomeDailyList);
+            map.put("page", incomeDailyPage);
         }
         return map;
     }
