@@ -12,6 +12,8 @@ import com.seeyoo.zm.visit.service.VisitRecordService;
 import com.seeyoo.zm.visit.util.PageParam;
 import com.seeyoo.zm.visit.util.StringTools;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -60,6 +62,13 @@ public class VisitRecordController {
 
     @RequestMapping(value = "/getVisitStastic", method = RequestMethod.GET)
     @ApiOperation(value = "客流详情")
+    @ApiImplicitParams({
+        @ApiImplicitParam(paramType = "query",name = "startDate",value = "开始日期",dataType = "String"),
+        @ApiImplicitParam(paramType = "query",name = "endDate",value = "结束日期",dataType = "String"),
+        @ApiImplicitParam(paramType = "query",name = "assetsId",value = "探针mac",dataType = "Integer"),
+        @ApiImplicitParam(paramType = "query",name = "page",value = "分页第几页",dataType = "Integer"),
+        @ApiImplicitParam(paramType = "query",name = "rows",value = "分页页显示数量",dataType = "Integer"),
+    })
     public Map<String, Object> getVisitStastic(String startDate, String endDate,Integer assetsId, @RequestParam(name = "page", defaultValue = "1") int page, @RequestParam(name = "rows", defaultValue = "10") int rows) {
         Map<String, Object> map = new HashMap<String, Object>();
 
@@ -124,6 +133,13 @@ public class VisitRecordController {
 
     @RequestMapping(value = "/getVisitResidenceStastic", method = RequestMethod.GET)
     @ApiOperation(value = "驻留时长")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "query",name = "startDate",value = "开始日期",dataType = "String"),
+            @ApiImplicitParam(paramType = "query",name = "endDate",value = "结束日期",dataType = "String"),
+            @ApiImplicitParam(paramType = "query",name = "assetsId",value = "探针mac",dataType = "Integer"),
+            @ApiImplicitParam(paramType = "query",name = "page",value = "分页第几页",dataType = "Integer"),
+            @ApiImplicitParam(paramType = "query",name = "rows",value = "分页页显示数量",dataType = "Integer"),
+    })
     public Map<String, Object> getVisitResidenceStastic(String startDate, String endDate,Integer assetsId, @RequestParam(name = "page", defaultValue = "1") int page, @RequestParam(name = "rows", defaultValue = "10") int rows) {
         Map<String, Object> map = new HashMap<String, Object>();
         if (StringTools.isEmptyString(startDate)) {
@@ -186,6 +202,13 @@ public class VisitRecordController {
 
     @RequestMapping(value = "/getNewAndOldCustomers", method = RequestMethod.GET)
     @ApiOperation(value = "新老客户")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "query",name = "startDate",value = "开始日期",dataType = "String"),
+            @ApiImplicitParam(paramType = "query",name = "endDate",value = "结束日期",dataType = "String"),
+            @ApiImplicitParam(paramType = "query",name = "assetsId",value = "探针mac",dataType = "Integer"),
+            @ApiImplicitParam(paramType = "query",name = "page",value = "分页第几页",dataType = "Integer"),
+            @ApiImplicitParam(paramType = "query",name = "rows",value = "分页页显示数量",dataType = "Integer"),
+    })
     public Map<String,Object> getNewAndOldCustomers(String startDate, String endDate,Integer assetsId, @RequestParam(name = "page", defaultValue = "1") int page, @RequestParam(name = "rows", defaultValue = "10") int rows){
         Map<String, Object> map = new HashMap<String, Object>();
         if (StringTools.isEmptyString(startDate)) {

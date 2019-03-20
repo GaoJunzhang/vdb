@@ -7,6 +7,8 @@ import com.seeyoo.zm.visit.service.IncomeService;
 import com.seeyoo.zm.visit.service.RegularCustomersService;
 import com.seeyoo.zm.visit.service.VisitRecordService;
 import com.seeyoo.zm.visit.util.StringTools;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,7 +34,14 @@ public class TestController {
     private RegularCustomersService regularCustomersService;
 
     @RequestMapping(value = "/test", method = RequestMethod.GET)
-    @ApiOperation(value = "客流详情")
+    @ApiOperation(value = "terController",notes = "It create for myself testing")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "query",name = "startDate",value = "startDate",dataType = "String"),
+            @ApiImplicitParam(paramType = "query",name = "endDate",value = "startDate",dataType = "String"),
+            @ApiImplicitParam(paramType = "query",name = "assetsId",value = "startDate",dataType = "Integer"),
+            @ApiImplicitParam(paramType = "query",name = "page",value = "page",dataType = "Integer"),
+            @ApiImplicitParam(paramType = "query",name = "rows",value = "rows",dataType = "Integer"),
+    })
     public Map<String, Object> test() {
         Map<String, Object> map = new HashMap<String, Object>();
 //        List<VisitRecord> visitRecords =  visitRecordService.findDistinctByMacAndTime("2019-03-15");
