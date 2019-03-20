@@ -3,6 +3,7 @@ package com.seeyoo.zm.visit.controller;
 import com.seeyoo.zm.visit.bean.DayVisitBean;
 import com.seeyoo.zm.visit.bean.VisitRecordBean;
 import com.seeyoo.zm.visit.bean.VisitStatisBean;
+import com.seeyoo.zm.visit.bean.VisitTimeBean;
 import com.seeyoo.zm.visit.model.RegularCustomers;
 import com.seeyoo.zm.visit.model.VisitRecord;
 import com.seeyoo.zm.visit.service.IncomeService;
@@ -151,16 +152,20 @@ public class VisitRecordController {
             int rCount = 0;
             int mCount = 0;//深度访问数量
             Map<String,String> map2 = new HashMap<String, String>();
-            List<VisitRecord> visitRecords =  visitRecordService.findDistinctByMacAndTime(StringTools.dateToString(visitStatisBean.getVisitDate()));
-            int allcount = visitRecords.size();
-            for (VisitRecord visitRecord:visitRecords){
-                int rMin = visitRecordService.residenceTime(StringTools.dateToString(visitStatisBean.getVisitDate()),visitRecord.getMac())/60;
-                allMin +=rMin;
-                if (rMin>rLevel){
-                    rCount++;
-                }
-                if (rMin>mLevel){
-                    mCount++;
+            List<VisitTimeBean> visitRecords =  visitRecordService.findDistinctByMacAndTime(StringTools.dateToString(visitStatisBean.getVisitDate()));
+            int allcount = 0;
+            if (visitRecords!=null){
+
+                for (VisitTimeBean visitTimeBean : visitRecords) {
+                    int rMin = visitTimeBean.getVisitTime().intValue()/60;
+                    allcount += visitTimeBean.getVisitCount().intValue();
+                    allMin += rMin;
+                    if (rMin > rLevel) {
+                        rCount++;
+                    }
+                    if (rMin > mLevel) {
+                        mCount++;
+                    }
                 }
             }
             map2.put("allVisitCount",allcount>0?allMin/allcount+"":"0");
@@ -209,9 +214,12 @@ public class VisitRecordController {
             int oldCount=0;
             int allCount = Integer.parseInt(visitStatisBean.getVisitCount()+"");
             List<DayVisitBean> dayVisitBeans = visitRecordService.dayVisits(visitStatisBean.getVisitDate()+"");
-            for (DayVisitBean dayVisitBean:dayVisitBeans){
-                if (isOldCustomer(regularCustomers,dayVisitBean.getMac(),dayVisitBean.getTime())){
-                    oldCount+=Integer.parseInt(dayVisitBean.getVisitDayCount()+"");
+            if (dayVisitBeans!=null){
+
+                for (DayVisitBean dayVisitBean : dayVisitBeans) {
+                    if (isOldCustomer(regularCustomers, dayVisitBean.getMac(), dayVisitBean.getTime())) {
+                        oldCount += Integer.parseInt(dayVisitBean.getVisitDayCount() + "");
+                    }
                 }
             }
             map2.put("visitDate",visitStatisBean.getVisitDate()+"");//日期

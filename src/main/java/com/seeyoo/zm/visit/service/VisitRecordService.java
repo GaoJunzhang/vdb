@@ -2,6 +2,7 @@ package com.seeyoo.zm.visit.service;
 
 import com.seeyoo.zm.visit.bean.DayVisitBean;
 import com.seeyoo.zm.visit.bean.VisitStatisBean;
+import com.seeyoo.zm.visit.bean.VisitTimeBean;
 import com.seeyoo.zm.visit.model.VisitRecord;
 import com.seeyoo.zm.visit.repository.VisitRecordRepository;
 import com.seeyoo.zm.visit.util.EntityUtils;
@@ -48,8 +49,9 @@ public class VisitRecordService {
         }
         return visitRecordRepository.findAllByTimeBetweenAndAssetsId(start,end,assetsId);
     }
-    public List<VisitRecord> findDistinctByMacAndTime(String time){
-        return visitRecordRepository.findByTime(time);
+    public List<VisitTimeBean> findDistinctByMacAndTime(String time){
+        List<Object[]> list = visitRecordRepository.findByTime(time);
+        return list.size()>0?EntityUtils.castEntity(list,VisitTimeBean.class,new VisitTimeBean()):null;
     }
 
     public int residenceTime(String time,String mac){
@@ -57,7 +59,7 @@ public class VisitRecordService {
     }
 
     public List<DayVisitBean> dayVisits(String time){
-        List<DayVisitBean> list = EntityUtils.castEntity(visitRecordRepository.dayVisits(time),DayVisitBean.class,new DayVisitBean());
-        return list;
+        List<Object[]> list = visitRecordRepository.dayVisits(time);
+        return list.size()>0?EntityUtils.castEntity(list,DayVisitBean.class,new DayVisitBean()):null;
     }
 }
