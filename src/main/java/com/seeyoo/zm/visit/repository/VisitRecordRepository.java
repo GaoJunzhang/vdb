@@ -15,7 +15,7 @@ import java.util.List;
 public interface VisitRecordRepository extends JpaRepository<VisitRecord,Long> {
 
 
-    public List<VisitRecord> findAllByTimeBetween(@Param("start") Timestamp start,@Param("end") Timestamp end);
+    public List<VisitRecord> findAllByTimeBetweenAndAssetsId(@Param("start") Timestamp start,@Param("end") Timestamp end ,@Param("assetsId") int assetsId);
 
     @Query(nativeQuery = true,value = "SELECT * FROM visit_record t where DATE_FORMAT(t.time,'%Y-%m-%d')=:time group  by t.mac")
     List<VisitRecord> findByTime(@Param("time") String time);

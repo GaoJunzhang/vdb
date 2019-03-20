@@ -46,11 +46,14 @@ public class VisitRecordController {
     @Value("${vdb.residence.level}")
     private int rLevel;
 
+    @Value("${vdb.residence.mlevel}")
+    private int mLevel;
+
     private static DecimalFormat df = new DecimalFormat("0.00");
 
     @RequestMapping(value = "/getVisitStastic", method = RequestMethod.GET)
     @ApiOperation(value = "客流详情")
-    public Map<String, Object> getVisitStastic(String startDate, String endDate, @RequestParam(name = "page", defaultValue = "1") int page, @RequestParam(name = "rows", defaultValue = "10") int rows) {
+    public Map<String, Object> getVisitStastic(String startDate, String endDate,Integer assetsId, @RequestParam(name = "page", defaultValue = "1") int page, @RequestParam(name = "rows", defaultValue = "10") int rows) {
         Map<String, Object> map = new HashMap<String, Object>();
 
         if (StringTools.isEmptyString(startDate)) {
@@ -69,9 +72,9 @@ public class VisitRecordController {
         Calendar tCalendar = Calendar.getInstance();
         tCalendar.setTime(startCalendar.getTime());
         List<VisitRecordBean> visitRecordBeans = new ArrayList<VisitRecordBean>();
-        List<VisitRecord> btVisits = visitRecordService.findAllByTimeBetween(Timestamp.valueOf(startDate + " 00:00:00"), Timestamp.valueOf(endDate + " 23:59:59"));
+        List<VisitRecord> btVisits = visitRecordService.findAllByTimeBetween(Timestamp.valueOf(startDate + " 00:00:00"), Timestamp.valueOf(endDate + " 23:59:59"),assetsId);
         PageParam pageParam = new PageParam(page, rows);
-        Map<String, Object> map1 = incomeService.findIncomeDailysByPage(pageParam, Timestamp.valueOf(startDate + " 00:00:00"), Timestamp.valueOf(endDate + " 23:59:59"));
+        Map<String, Object> map1 = incomeService.findIncomeDailysByPage(pageParam, Timestamp.valueOf(startDate + " 00:00:00"), Timestamp.valueOf(endDate + " 23:59:59"),assetsId);
         Page<VisitStatisBean> pages = (Page<VisitStatisBean>) map1.get("page");
         List<VisitStatisBean> visitStatisBeans = pages.getContent();
         for (VisitStatisBean visitStatisBean : visitStatisBeans) {
@@ -114,7 +117,7 @@ public class VisitRecordController {
 
     @RequestMapping(value = "/getVisitResidenceStastic", method = RequestMethod.GET)
     @ApiOperation(value = "客流详情")
-    public Map<String, Object> getVisitResidenceStastic(String startDate, String endDate, @RequestParam(name = "page", defaultValue = "1") int page, @RequestParam(name = "rows", defaultValue = "10") int rows) {
+    public Map<String, Object> getVisitResidenceStastic(String startDate, String endDate,Integer assetsId, @RequestParam(name = "page", defaultValue = "1") int page, @RequestParam(name = "rows", defaultValue = "10") int rows) {
         Map<String, Object> map = new HashMap<String, Object>();
         if (StringTools.isEmptyString(startDate)) {
             Calendar calendar = Calendar.getInstance();
@@ -131,9 +134,8 @@ public class VisitRecordController {
         endCalendar.setTime(StringTools.stringToDate(endDate));
         Calendar tCalendar = Calendar.getInstance();
         tCalendar.setTime(startCalendar.getTime());
-        List<VisitRecordBean> visitRecordBeans = new ArrayList<VisitRecordBean>();
         PageParam pageParam = new PageParam(page, rows);
-        Map<String, Object> map1 = incomeService.findIncomeDailysByPage(pageParam, Timestamp.valueOf(startDate + " 00:00:00"), Timestamp.valueOf(endDate + " 23:59:59"));
+        Map<String, Object> map1 = incomeService.findIncomeDailysByPage(pageParam, Timestamp.valueOf(startDate + " 00:00:00"), Timestamp.valueOf(endDate + " 23:59:59"),assetsId);
         Page<VisitStatisBean> pages = (Page<VisitStatisBean>) map1.get("page");
         List<VisitStatisBean> visitStatisBeans = pages.getContent();
         List<Map<String,String>> list = new ArrayList<Map<String,String>>(pages.getSize());
@@ -141,21 +143,29 @@ public class VisitRecordController {
 //            根据日期查询出当天所有人员访问记录
             int allMin = 0;
             int rCount = 0;
+            int mCount = 0;//深度访问数量
             Map<String,String> map2 = new HashMap<String, String>();
             List<VisitRecord> visitRecords =  visitRecordService.findDistinctByMacAndTime(StringTools.dateToString(visitStatisBean.getVisitDate()));
             int allcount = visitRecords.size();
             for (VisitRecord visitRecord:visitRecords){
-                int rMin = visitRecordService.residenceTime(StringTools.dateToString(visitStatisBean.getVisitDate()),visitRecord.getMac());
+                int rMin = visitRecordService.residenceTime(StringTools.dateToString(visitStatisBean.getVisitDate()),visitRecord.getMac())/60;
                 allMin +=rMin;
                 if (rMin>rLevel){
                     rCount++;
                 }
+                if (rMin>mLevel){
+                    mCount++;
+                }
             }
             map2.put("allVisitCount",allcount>0?allMin/allcount+"":"0");
-            map2.put("residenceCount",rCount+"");
-            map2.put("residenceRate",allcount>0?rCount/allcount+"":"0");
-            map2.put("shortVisitCount",allcount-rCount+"");
-            map2.put("shortVisitRate",allcount>0?(allcount-rCount)/allcount+"":"0");
+            map2.put("residenceCount",rCount+"");//天-长访数量
+            map2.put("residenceRate",allcount>0?df.format((float)rCount*100/allcount)+"":"0");//天-长访率
+            map2.put("shortVisitCount",allcount-rCount+"");//端访数量=总数量-长访数量
+            map2.put("shortVisitRate",allcount>0?df.format((float)(allcount-rCount)*100/allcount)+"":"0");//短访率
+            map2.put("visitDate",visitStatisBean.getVisitDate()+"");//日期
+            map2.put("residenceTime",allMin+"");//天-长访总时间
+            map2.put("averageTime",allcount>0?allMin/allcount+"":"0");
+            map2.put("mCount",mCount+"");
             list.add(map2);
         }
         map.put("rows", list);

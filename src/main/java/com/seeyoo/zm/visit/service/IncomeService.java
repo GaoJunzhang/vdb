@@ -24,14 +24,17 @@ public class IncomeService {
     @PersistenceContext
     EntityManager entityManager;
 
-    public Map<String,Object> findIncomeDailysByPage(PageParam pageParam, Timestamp start, Timestamp end) {
+    public Map<String,Object> findIncomeDailysByPage(PageParam pageParam, Timestamp start, Timestamp end,Integer assetsId) {
         Map<String,Object> map = new HashMap<String,Object>();
         StringBuilder countSelectSql = new StringBuilder();
         countSelectSql.append("select count(id) from Calendar where 1=1 ");
 
         StringBuilder selectSql = new StringBuilder();
-        selectSql.append("SELECT date(dday) as visitDate, count(*) - 1 as visitCount FROM ( SELECT datelist as dday FROM calendar  UNION ALL SELECT time FROM visit_record) a where 1=1 ");
-
+        selectSql.append("SELECT date(dday) as visitDate, count(*) - 1 as visitCount FROM ( SELECT datelist as dday FROM calendar  UNION ALL SELECT time FROM visit_record ");
+        if (assetsId!=null){
+            selectSql.append(" where assets_id=").append(assetsId);
+        }
+        selectSql.append(") a where 1=1");
         Map<String, Object> params = new HashMap<>();
         StringBuilder whereSql = new StringBuilder();
         StringBuffer sWhereSql = new StringBuffer();

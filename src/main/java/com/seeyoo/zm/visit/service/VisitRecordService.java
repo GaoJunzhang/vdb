@@ -40,8 +40,8 @@ public class VisitRecordService {
         return visitRecordRepository.save(visitRecord);
     }
 
-    public List<VisitRecord> findAllByTimeBetween(Timestamp start, Timestamp end){
-        return visitRecordRepository.findAllByTimeBetween(start,end);
+    public List<VisitRecord> findAllByTimeBetween(Timestamp start, Timestamp end,int assetsId){
+        return visitRecordRepository.findAllByTimeBetweenAndAssetsId(start,end,assetsId);
     }
     public List<VisitRecord> findDistinctByMacAndTime(String time){
         return visitRecordRepository.findByTime(time);
