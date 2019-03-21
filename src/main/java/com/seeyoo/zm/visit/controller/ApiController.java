@@ -52,7 +52,7 @@ public class ApiController {
         }
         Assets assets = assetsService.findByMac(jsonObject.get("mac")+"");
         if (assets==null){
-            assets = assetsService.saveAssets(null, null, jsonObject.get("mac") + "");
+            assets = assetsService.saveAssets(null,  jsonObject.get("mac") + "",jsonObject.get("mac") + "");
         }
         JSONArray list = JSONArray.fromObject(jsonObject.get("list"));
         Timestamp time1 = new Timestamp(System.currentTimeMillis());

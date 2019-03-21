@@ -105,8 +105,9 @@ public class VisitRecordController {
     }
 
     public VisitRecordBean getVisitStastic(List<VisitRecord> list, String date, int aDb, int bDb, int pAdb, int pBdb) {
+        VisitRecordBean visitRecordBean = new VisitRecordBean();
         if (list.size() <= 0) {
-            return null;
+            return visitRecordBean;
         }
         int visitCount = 0;
         int vaildCount = 0;
@@ -123,7 +124,7 @@ public class VisitRecordController {
                 }
             }
         }
-        VisitRecordBean visitRecordBean = new VisitRecordBean();
+
         visitRecordBean.setVisitCount(visitCount);
         visitRecordBean.setVaildCount(vaildCount);
         visitRecordBean.setPassCount(passCount);

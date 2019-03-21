@@ -2,6 +2,7 @@ package com.seeyoo.zm.visit.service;
 
 import com.seeyoo.zm.visit.model.Assets;
 import com.seeyoo.zm.visit.repository.AssetsRepository;
+import com.seeyoo.zm.visit.util.StringTools;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,20 +24,27 @@ public class AssetsService {
     @Autowired
     private AssetsRepository assetsRepository;
 
-    public Assets saveAssets(Integer id, Timestamp time, String mac) {
+    public Assets saveAssets(Integer id, String name, String mac) {
         Assets assets = null;
         if (id == null) {
             assets = new Assets();
             assets.setTime(new Timestamp(System.currentTimeMillis()));
         } else {
             assets = assetsRepository.findOne(id);
+//            assets.setTime(time);
         }
-        assets.setMac(mac);
-//        assets.setTime(time);
+        if (!StringTools.isEmptyString(mac)) {
+
+            assets.setMac(mac);
+        }
+        if (!StringTools.isEmptyString(name)) {
+
+            assets.setName(name);
+        }
         return assetsRepository.save(assets);
     }
 
-    public Page<Assets> collages(String mac, int page, int size, String sortType, String sortValue) {
+    public Page<Assets> collages(String mac, String name,int page, int size, String sortType, String sortValue) {
         String[] svs = sortValue.split(",");
         String[] sts = sortType.split(",");
 
@@ -47,7 +55,6 @@ public class AssetsService {
         }
         Sort sort = new Sort(orders);
         Pageable pageable = new PageRequest(page, size, sort);
-
         Specification<Assets> specification = new Specification<Assets>() {
             @Override
             public Predicate toPredicate(Root<Assets> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
@@ -56,15 +63,22 @@ public class AssetsService {
                 if (mac != null && !mac.trim().isEmpty()) {
                     predicate.getExpressions().add(cb.like(root.get("mac"), "%" + mac + "%"));
                 }
+                if (name != null && !name.trim().isEmpty()) {
+                    predicate.getExpressions().add(cb.like(root.get("name"), "%" + name + "%"));
+                }
                 return predicate;
             }
 
         };
-
         return assetsRepository.findAll(specification, pageable);
     }
 
-    public Assets findByMac(String mac){
+    public Assets findByMac(String mac) {
         return assetsRepository.findByMac(mac);
     }
+
+    public List<Assets> findAllById(int id) {
+        return assetsRepository.findAllById(id);
+    }
+
 }

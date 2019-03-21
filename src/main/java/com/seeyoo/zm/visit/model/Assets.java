@@ -1,18 +1,25 @@
 package com.seeyoo.zm.visit.model;
 
-import javax.persistence.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
-public class Assets {
+public class Assets implements Serializable {
+    private static final long serialVersionUID = -5567121585657132027L;
     private int id;
     private String mac;
     private Timestamp time;
+    private String name;
 
     @Id
     @Column(name = "id", nullable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int getId() {
         return id;
     }
@@ -41,6 +48,17 @@ public class Assets {
         this.time = time;
     }
 
+    @Basic
+    @Column(name = "name", nullable = true, length = 64)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -48,11 +66,12 @@ public class Assets {
         Assets assets = (Assets) o;
         return id == assets.id &&
                 Objects.equals(mac, assets.mac) &&
-                Objects.equals(time, assets.time);
+                Objects.equals(time, assets.time) &&
+                Objects.equals(name, assets.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, mac, time);
+        return Objects.hash(id, mac, time, name);
     }
 }

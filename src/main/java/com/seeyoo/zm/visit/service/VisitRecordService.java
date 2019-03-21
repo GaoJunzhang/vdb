@@ -1,27 +1,14 @@
 package com.seeyoo.zm.visit.service;
 
 import com.seeyoo.zm.visit.bean.DayVisitBean;
-import com.seeyoo.zm.visit.bean.VisitStatisBean;
 import com.seeyoo.zm.visit.bean.VisitTimeBean;
 import com.seeyoo.zm.visit.model.VisitRecord;
 import com.seeyoo.zm.visit.repository.VisitRecordRepository;
 import com.seeyoo.zm.visit.util.EntityUtils;
-import com.seeyoo.zm.visit.util.StringTools;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import javax.xml.crypto.Data;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
