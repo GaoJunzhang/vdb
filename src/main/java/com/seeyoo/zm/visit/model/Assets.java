@@ -40,6 +40,7 @@ public class Assets implements Serializable {
 
     @Basic
     @Column(name = "time", nullable = true)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     public Timestamp getTime() {
         return time;
     }
@@ -50,7 +51,6 @@ public class Assets implements Serializable {
 
     @Basic
     @Column(name = "name", nullable = true, length = 64)
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     public String getName() {
         return name;
     }
