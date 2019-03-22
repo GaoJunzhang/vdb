@@ -340,6 +340,7 @@ public class VisitRecordController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "query", name = "startDate", value = "startDate", dataType = "String"),
             @ApiImplicitParam(paramType = "query", name = "endDate", value = "endDate", dataType = "String"),
+            @ApiImplicitParam(paramType = "query", name = "type", value = "0 or 1", dataType = "int"),
     })
     public Map<String, Object> getTop10Assets(String startDate, String endDate,@RequestParam(name = "type",defaultValue = "0",required = false) int type) {
         Map<String, Object> map = new HashMap<String, Object>();
