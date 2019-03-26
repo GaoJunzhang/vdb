@@ -4,6 +4,8 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Objects;
 
+import static javax.persistence.GenerationType.IDENTITY;
+
 @Entity
 @Table(name = "regular_customers", schema = "vdb", catalog = "")
 public class RegularCustomers {
@@ -13,6 +15,7 @@ public class RegularCustomers {
 
     @Id
     @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = IDENTITY)
     public long getId() {
         return id;
     }
