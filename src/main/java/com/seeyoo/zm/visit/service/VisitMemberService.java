@@ -12,7 +12,7 @@ public class VisitMemberService {
     @Autowired
     private VisitMemberRepository visitMemberRepository;
 
-    public VisitMember saveVisitMember(Long id,Integer age,short gender, Integer beauty,Integer stay,String stamp, String mac, Timestamp time){
+    public VisitMember saveVisitMember(Long id,Integer age,short gender, Integer beauty,Integer stay,Timestamp stamp, String mac, Timestamp time){
         VisitMember member = null;
         if (id == null){
             member = new VisitMember();

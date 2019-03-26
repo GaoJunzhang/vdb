@@ -101,7 +101,7 @@ public class ApiController {
                 JSONObject mObj = JSONObject.fromObject(list.get(i));
                 visitMemberService.saveVisitMember(null, Integer.parseInt(mObj.get("age") + ""), Short.parseShort(mObj.get("gender")+""),
                         Integer.parseInt(mObj.get("beauty") + ""), Integer.parseInt(mObj.get("stay") + ""),
-                        mObj.get("stamp") + "", mac, new Timestamp(System.currentTimeMillis()));
+                        Timestamp.valueOf(mObj.get("stamp") + ""), mac, new Timestamp(System.currentTimeMillis()));
             }
         } catch (NumberFormatException e) {
             jsonResult = new JsonResult(ResultCode.EXCEPTION, "请求异常", e);

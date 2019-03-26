@@ -14,7 +14,7 @@ public class VisitMember {
     private Short gender;
     private Integer beauty;
     private Integer stay;
-    private String stamp;
+    private Timestamp stamp;
     private String mac;
     private Timestamp time;
 
@@ -70,12 +70,12 @@ public class VisitMember {
     }
 
     @Basic
-    @Column(name = "stamp", nullable = true, length = 50)
-    public String getStamp() {
+    @Column(name = "stamp", nullable = true)
+    public Timestamp getStamp() {
         return stamp;
     }
 
-    public void setStamp(String stamp) {
+    public void setStamp(Timestamp stamp) {
         this.stamp = stamp;
     }
 
