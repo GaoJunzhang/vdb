@@ -24,7 +24,7 @@ public class AssetsService {
     @Autowired
     private AssetsRepository assetsRepository;
 
-    public Assets saveAssets(Integer id, String name, String mac) {
+    public Assets saveAssets(Integer id, String name, String mac,short type) {
         Assets assets = null;
         if (id == null) {
             assets = new Assets();
@@ -41,6 +41,7 @@ public class AssetsService {
 
             assets.setName(name);
         }
+        assets.setType(type);
         return assetsRepository.save(assets);
     }
 

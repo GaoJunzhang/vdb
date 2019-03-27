@@ -52,7 +52,7 @@ public class ApiController {
         }
         Assets assets = assetsService.findByMac(jsonObject.get("mac")+"");
         if (assets==null){
-            assets = assetsService.saveAssets(null,  jsonObject.get("mac") + "",jsonObject.get("mac") + "");
+            assets = assetsService.saveAssets(null,  jsonObject.get("mac") + "",jsonObject.get("mac") + "",(short)0);
         }
         JSONArray list = JSONArray.fromObject(jsonObject.get("list"));
         Timestamp time1 = new Timestamp(System.currentTimeMillis());
@@ -97,11 +97,15 @@ public class ApiController {
             }
             JSONArray list = JSONArray.fromObject(jsonObject.get("list"));
             String mac = jsonObject.get("mac") + "";
+            Assets assets = assetsService.findByMac(jsonObject.get("mac")+"");
+            if (assets==null){
+                assets = assetsService.saveAssets(null,  jsonObject.get("mac") + "",jsonObject.get("mac") + "",(short)1);
+            }
             for (int i = 0; i < list.size(); i++) {
                 JSONObject mObj = JSONObject.fromObject(list.get(i));
                 visitMemberService.saveVisitMember(null, Integer.parseInt(mObj.get("age") + ""), Short.parseShort(mObj.get("gender")+""),
                         Integer.parseInt(mObj.get("beauty") + ""), Integer.parseInt(mObj.get("stay") + ""),
-                        Timestamp.valueOf(mObj.get("stamp") + ""), mac, new Timestamp(System.currentTimeMillis()));
+                        Timestamp.valueOf(mObj.get("stamp") + ""), assets.getId(), new Timestamp(System.currentTimeMillis()));
             }
         } catch (NumberFormatException e) {
             jsonResult = new JsonResult(ResultCode.EXCEPTION, "请求异常", e);

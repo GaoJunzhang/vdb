@@ -7,7 +7,7 @@ import java.util.Objects;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
-@Table(name = "visit_member", schema = "mps", catalog = "")
+@Table(name = "visit_member", schema = "vdb", catalog = "")
 public class VisitMember {
     private long id;
     private Integer age;
@@ -15,8 +15,8 @@ public class VisitMember {
     private Integer beauty;
     private Integer stay;
     private Timestamp stamp;
-    private String mac;
     private Timestamp time;
+    private Integer assetsId;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -80,16 +80,6 @@ public class VisitMember {
     }
 
     @Basic
-    @Column(name = "mac", nullable = true, length = 32)
-    public String getMac() {
-        return mac;
-    }
-
-    public void setMac(String mac) {
-        this.mac = mac;
-    }
-
-    @Basic
     @Column(name = "time", nullable = true)
     public Timestamp getTime() {
         return time;
@@ -99,23 +89,33 @@ public class VisitMember {
         this.time = time;
     }
 
+    @Basic
+    @Column(name = "assets_id", nullable = true)
+    public Integer getAssetsId() {
+        return assetsId;
+    }
+
+    public void setAssetsId(Integer assetsId) {
+        this.assetsId = assetsId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        VisitMember that = (VisitMember) o;
-        return id == that.id &&
-                Objects.equals(age, that.age) &&
-                Objects.equals(gender, that.gender) &&
-                Objects.equals(beauty, that.beauty) &&
-                Objects.equals(stay, that.stay) &&
-                Objects.equals(stamp, that.stamp) &&
-                Objects.equals(mac, that.mac) &&
-                Objects.equals(time, that.time);
+        VisitMember member = (VisitMember) o;
+        return id == member.id &&
+                Objects.equals(age, member.age) &&
+                Objects.equals(gender, member.gender) &&
+                Objects.equals(beauty, member.beauty) &&
+                Objects.equals(stay, member.stay) &&
+                Objects.equals(stamp, member.stamp) &&
+                Objects.equals(time, member.time) &&
+                Objects.equals(assetsId, member.assetsId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, age, gender, beauty, stay, stamp, mac, time);
+        return Objects.hash(id, age, gender, beauty, stay, stamp, time, assetsId);
     }
 }

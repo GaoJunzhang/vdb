@@ -50,13 +50,13 @@ public class AssetsController {
             @ApiImplicitParam(paramType = "query",name = "id",value = "id",dataType = "Integer"),
             @ApiImplicitParam(paramType = "query",name = "name",value = "name",dataType = "String"),
     })
-    public Object postAssets(@RequestParam(name = "id",required = true) Integer id, @RequestParam(name = "name",required = true) String name){
+    public Object postAssets(@RequestParam(name = "id",required = true) Integer id, @RequestParam(name = "name",required = true) String name,@RequestParam("type") short type){
         JsonResult jsonResult;
         Assets assets = new Assets();
         assets.setId(id);
         assets.setName(name);
         try {
-            assetsService.saveAssets(id,name,null);
+            assetsService.saveAssets(id,name,null,type);
         } catch (Exception e) {
             e.printStackTrace();
             jsonResult = new JsonResult(ResultCode.EXCEPTION, "请求异常", e);

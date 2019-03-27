@@ -2,13 +2,12 @@ package com.seeyoo.zm.visit.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Objects;
+
+import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 public class Assets implements Serializable {
@@ -17,9 +16,11 @@ public class Assets implements Serializable {
     private String mac;
     private Timestamp time;
     private String name;
+    private Short type;
 
     @Id
     @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = IDENTITY)
     public int getId() {
         return id;
     }
@@ -73,5 +74,15 @@ public class Assets implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(id, mac, time, name);
+    }
+
+    @Basic
+    @Column(name = "type", nullable = true)
+    public Short getType() {
+        return type;
+    }
+
+    public void setType(Short type) {
+        this.type = type;
     }
 }
