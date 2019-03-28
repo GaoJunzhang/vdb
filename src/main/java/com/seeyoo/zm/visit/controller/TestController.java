@@ -1,18 +1,20 @@
 package com.seeyoo.zm.visit.controller;
 
+import com.seeyoo.zm.visit.bean.VisitTimeBean;
 import com.seeyoo.zm.visit.service.IncomeService;
 import com.seeyoo.zm.visit.service.RegularCustomersService;
 import com.seeyoo.zm.visit.service.VisitRecordService;
+import com.seeyoo.zm.visit.result.ResultVO;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.sql.Timestamp;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -47,5 +49,20 @@ public class TestController {
         map.put("diff",(timestamp.getTime()-timestamp2.getTime())/3600000);
 //        map.put("list",list);
         return map;
+    }
+
+    @ApiOperation("查询用户分页列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "query", dataType = "Long", name = "assetsId", value = "assetsId", required = true),
+    })
+    @GetMapping(value = "/page")
+    public ResultVO<List<VisitTimeBean>> selectSysUserPage(@ApiIgnore int assetsId) {
+        try {
+            List<VisitTimeBean> visitRecords =  visitRecordService.findDistinctByMacAndTime("2019-03-15",assetsId);
+            return ResultVO.getFailed("success",visitRecords);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResultVO.getSuccess("查询用户分页列表失败");
+        }
     }
 }

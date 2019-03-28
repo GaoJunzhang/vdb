@@ -1,8 +1,7 @@
 package com.seeyoo.zm.visit.controller;
 
 import com.seeyoo.zm.visit.model.Assets;
-import com.seeyoo.zm.visit.result.JsonResult;
-import com.seeyoo.zm.visit.result.ResultCode;
+import com.seeyoo.zm.visit.result.ResultVO;
 import com.seeyoo.zm.visit.service.AssetsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -51,7 +50,6 @@ public class AssetsController {
             @ApiImplicitParam(paramType = "query",name = "name",value = "name",dataType = "String"),
     })
     public Object postAssets(@RequestParam(name = "id",required = true) Integer id, @RequestParam(name = "name",required = true) String name,@RequestParam("type") short type){
-        JsonResult jsonResult;
         Assets assets = new Assets();
         assets.setId(id);
         assets.setName(name);
@@ -59,10 +57,8 @@ public class AssetsController {
             assetsService.saveAssets(id,name,null,type);
         } catch (Exception e) {
             e.printStackTrace();
-            jsonResult = new JsonResult(ResultCode.EXCEPTION, "请求异常", e);
-            return jsonResult;
+            return ResultVO.getFailed("Request Exception",e);
         }
-        jsonResult = new JsonResult(ResultCode.SUCCESS, "成功", null);
-        return jsonResult;
+        return ResultVO.getSuccess("Success");
     }
 }
